@@ -11,18 +11,23 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 
 public class MultipartRequestPlugin implements MethodCallHandler {
-    static MethodChannel channel;
+    private MethodChannel channel;
     Activity activity;
 
     public static void registerWith(Registrar registrar) {
-        channel = new MethodChannel(registrar.messenger(), "multipart_request");
         MultipartRequestPlugin multipartRequestPlugin = new MultipartRequestPlugin();
         multipartRequestPlugin.activity = registrar.activity();
-        channel.setMethodCallHandler(multipartRequestPlugin);
+        multipartRequestPlugin.setup(registrar.messenger());
+    }
+
+    public void setup(final BinaryMessenger messenger) {
+        this.channel = new MethodChannel(messenger, "multipart_request");
+        this.channel.setMethodCallHandler(this);
     }
 
     @SuppressLint("StaticFieldLeak")
